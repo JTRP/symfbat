@@ -1,19 +1,48 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+{# Route de la page d'acceuil #}
+{% set route = app.request.attributes.get('_route') %}
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
+    {# Font-Awsome #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    {# Bootstrap CSS #}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+
+    {# Styles #}
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
+    {# Block title #}
+    {# TODO: Dynamiser le nom du site #}
+    <title>{% block title %}{% endblock %} - Le BLog de Batman</title>
+
+    {# BLock css #}
+    {% block css %}{% endblock %}
+
+
+</head>
+
+<body>
+    <main>
+
+        {# Menu principale #}
+        {% include 'partials/_main_navbar.html.twig' %}
+
+        {# Block body #}
         {% block body %}{% endblock %}
-    </body>
+
+    </main>
+
+    {# Bootstrap JS #}
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+
+    {# Block JS #}
+    {% block js %}{% endblock %}
+
+</body>
 </html>
