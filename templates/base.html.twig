@@ -33,6 +33,10 @@
         {# Menu principale #}
         {% include 'partials/_main_navbar.html.twig' %}
 
+        {# Affichage des message flashes #}
+        {% include 'partials/_flashes.html.twig' %}
+
+
         {# Block body #}
         {% block body %}{% endblock %}
 
