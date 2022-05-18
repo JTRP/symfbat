@@ -77,5 +77,22 @@ class BlogController extends AbstractController
     }
 
 
+    /**
+     * Contrôleur de la page qui liste les articles
+     */
+    #[Route('/publications/liste/', name: 'publication_list')]
+    public function publicationList(ArticleRepository $articleRepository): Response
+    {
+
+        $articles = $articleRepository->findAll();
+
+
+
+        return $this->render('blog/publication_list.html.twig', [
+            'articles' => $articles
+        ]);
+    }
+
+
 
 }
