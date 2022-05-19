@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,11 +15,19 @@ class MainController extends AbstractController
      * Contrôleur de la page d'acceuil
      */
     #[Route('/', name: 'home')]
-    public function index(): Response
+    public function index( ArticleRepository $articleRepository ): Response
     {
 
+        // Récupération des dernier articles a affiché sur l'acceuil
+        $articles = $articleRepository->findBy(
+            [],  // WHERE du SELECT
+            ['publicationDate' => 'DESC'], // ORDER BY du SELECT
+            $this->getParameter('app.article.last_article_number_on_home') // LIMIT du SELECT (qu'on récupère dans service.yaml)
+        );
 
-       return $this->render('main/home.html.twig');
+       return $this->render('main/home.html.twig', [
+           'articles' => $articles
+       ]);
     }
 
     /**
