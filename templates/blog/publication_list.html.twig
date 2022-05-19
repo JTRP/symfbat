@@ -33,7 +33,7 @@
                                 </div>
 
                                 <div class="card-body">
-                                    {{ article.content|excerpt(100) }}
+                                    {{ article.content|striptags|excerpt(70) }}
                                     <div class="mb-2">
 
                                         <a class="text-decoration-none" href="{{ path('blog_publication_view', {'id': article.id, 'slug': article.slug}) }}">Lire la suite</a>
