@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\NewArticleFormType;
 use App\Repository\ArticleRepository;
+use Couchbase\RegexpSearchQuery;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -109,6 +110,38 @@ class BlogController extends AbstractController
             'articles' => $articles
         ]);
     }
+
+    /**
+     * Contôleur de la page qdmin permettant de supprimer un article via son id dans l'url
+     *
+     * Accès résèrvé au administrateur (ROLE_ADMIN)
+     */
+    #[Route('/publication/suppression/{id}/', name: 'publicaton_delete', priority: 10)]
+    #[IsGranted('ROLE_ADMIN')]
+    public function publicationDelete(Article $article, ArticleRepository $articleRepository, Request $request) : Response
+    {
+
+        $token = $request->query->get('token', '');
+
+        if ( !$this->isCsrfTokenValid( 'blog_publication_delete_' . $article->getId(), $token ) ) {
+
+            $this->addFlash('error', 'Token invalide');
+
+        } else {
+
+            // Suppréssion de l'article
+            $articleRepository->remove($article, true);
+
+            // Message flash de succès
+            $this->addFlash('success', 'La publication a été supprimée avec succès !');
+
+        }
+
+
+        // Redirection vers la page qui liste les articles
+        return $this->redirectToRoute('blog_publication_list');
+    }
+
 
 
 
