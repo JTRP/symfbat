@@ -2,6 +2,12 @@
 
 {% block title %}Créer un compte{% endblock %}
 
+
+{% block css %}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+
 {% block body %}
 
     <div class="container-fluid">
@@ -14,8 +20,31 @@
 
             <div class="col-12 col-md-8 col-lg-4 mx-auto">
 
-                {# TODO: ajouter le captcha #}
-                {{ form( registrationForm ) }}
+                {# Ouverture du formulaire #}
+                {{ form_start( registrationForm ) }}
+
+                {# Afficage des erreurs générale du formulaire #}
+                <div class="mb-3">
+                    {{ form_errors( registrationForm ) }}
+                </div>
+
+
+                {# Afficage des champs #}
+                {{ form_row( registrationForm.email ) }}
+                {{ form_row( registrationForm.plainPassword ) }}
+                {{ form_row( registrationForm.pseudonym ) }}
+
+                {# Affichage de Recaptcha Google #}
+                <div class="mb-3">
+                    <div class="mb-2">Captcha de sécuriteé</div>
+                    <div class="g-recaptcha" data-sitekey="{{ google_recaptcha_site_key }}"></div>
+                </div>
+
+                {{ form_row( registrationForm.save ) }}
+
+                {{ form_end( registrationForm ) }}
+
+
 
             </div>
 
