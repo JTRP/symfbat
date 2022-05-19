@@ -18,8 +18,7 @@
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
     {# Block title #}
-    {# TODO: Dynamiser le nom du site #}
-    <title>{% block title %}{% endblock %} - Le BLog de Batman</title>
+    <title>{% block title %}{% endblock %} - {{ site_name }}</title>
 
     {# BLock css #}
     {% block css %}{% endblock %}
