@@ -53,6 +53,28 @@
 
                 </article>
 
+                <div class="row">
+
+                    {% if article.comments is not empty %}
+
+                        {% for comment in article.comments %}
+
+                            <p> {{ comment.content }} </p>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+                {% if is_granted('ROLE_USER') %}
+                    {{ form( form ) }}
+
+                {% else %}
+                    <p>Vous pouvez vous connecté sur la page de <a href="{{ path('app_login') }}">connexion</a></p>
+                {% endif %}
+
+
             </div>
 
         </div>

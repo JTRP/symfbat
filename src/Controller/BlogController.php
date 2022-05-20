@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
+use App\Form\CommentFormType;
 use App\Form\NewArticleFormType;
 use App\Repository\ArticleRepository;
-use Couchbase\RegexpSearchQuery;
+use App\Repository\CommentRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -72,11 +74,26 @@ class BlogController extends AbstractController
      */
     #[Route('/publication/{id}/{slug}', name: 'publication_view')]
     #[ParamConverter('article', options: [ 'mapping' => [ 'id' => 'id', 'slug' => 'slug' ] ] )]
-    public function publicationView( Article $article ) : Response
+    public function publicationView( Article $article, Request $request, CommentRepository $commentRepository ) : Response
     {
 
+        $comment = new Comment();
+
+        $form = $this->createForm( CommentFormType::class, $comment );
+
+        $form->handleRequest( $request );
+
+        if ( $form->isSubmitted() && $form->isValid() ) {
+
+            $comment->setPublicationDate( new \DateTime() );
+
+            $commentRepository->add( $comment, true );
+
+        }
+
         return $this->render('blog/publication_view.html.twig', [
-            'article' => $article,
+            'article'   => $article,
+            'form'      => $form->createView()
         ]);
     }
 
@@ -182,7 +199,6 @@ class BlogController extends AbstractController
             'form' => $form->createView()
         ]);
     }
-
 
 
 
