@@ -42,9 +42,13 @@ class NewArticleFormType extends AbstractType
 
                 'label'                 => 'Contenu',
 
-                'purify_html' => true,
+                'attr'          => [
+                    'class'             => 'd-none'
+                ],
 
-                'constraints' => [
+                'purify_html'           => true,
+
+                'constraints'   => [
 
                     new NotBlank([
                         'message'       => 'Merci de renseigner un contenu'
@@ -62,9 +66,9 @@ class NewArticleFormType extends AbstractType
             ])
 
             ->add('save', SubmitType::class, [
-                'label' => 'Publier',
-                'attr' => [
-                    'class' => 'btn btn-outline-primary w-100'
+                'label'                 => 'Publier',
+                'attr'        => [
+                    'class'             => 'btn btn-outline-primary w-100'
                 ]
             ])
         ;
@@ -73,9 +77,9 @@ class NewArticleFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'    => Article::class,
-            'attr'          => [
-                'novalidate' => 'novalidate'
+            'data_class'                => Article::class,
+            'attr'              => [
+                'novalidate'            => 'novalidate'
             ]
         ]);
     }
