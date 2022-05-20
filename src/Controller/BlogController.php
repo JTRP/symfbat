@@ -143,6 +143,47 @@ class BlogController extends AbstractController
     }
 
 
+    /**
+     * Contôleur de la page qdmin permettant de modifier un article via son id dans l'url
+     *
+     * Accès résèrvé au administrateur (ROLE_ADMIN)
+     */
+    #[Route('/publication/modifier/{id}/', name: 'publicaton_modify', priority: 10)]
+    #[IsGranted('ROLE_ADMIN')]
+    public function publicationModify(Article $article, ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger) : Response
+    {
+
+        // Instanciation d'un nouveau formulaire basé sur $article qui contient déjà les donnée actuelles de l"article à modifier
+        $form = $this->createForm(NewArticleFormType::class, $article);
+
+        $form->handleRequest($request);
+
+        // Si le formulaire est envoyé et sans erreur
+        if ( $form->isSubmitted() && $form->isValid() ) {
+
+            // Sauvegarde dans la BDD
+            $article->setSlug( $slugger->slug( $article->getTitle()  )->lower() );
+            $em = $doctrine->getManager();
+            $em->flush();
+
+            $this->addFlash('success', 'Publication modifier avec succès !');
+
+            return $this->redirectToRoute('blog_publication_view', [
+                'id' => $article->getId(),
+                'slug' => $article->getSlug(),
+            ]);
+
+        }
+
+
+
+        // Redirection vers la page qui liste les articles
+        return $this->render('blog/modify_article.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+
 
 
 }
