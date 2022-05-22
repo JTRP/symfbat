@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Form\CommentFormType;
 use App\Form\NewArticleFormType;
 use App\Repository\ArticleRepository;
@@ -77,23 +78,67 @@ class BlogController extends AbstractController
     public function publicationView( Article $article, Request $request, CommentRepository $commentRepository ) : Response
     {
 
+        // Intensification des class User et Article pour hydrater "comment"
         $comment = new Comment();
 
+        // Formulaire de "comment"
         $form = $this->createForm( CommentFormType::class, $comment );
 
+        // On hydrate le formulaire pour "comment"
         $form->handleRequest( $request );
 
+        // Si pas d'erreur
         if ( $form->isSubmitted() && $form->isValid() ) {
 
             $comment->setPublicationDate( new \DateTime() );
+            $comment->setArticle( $article );
+            $comment->setAuthor( $this->getUser() );
 
             $commentRepository->add( $comment, true );
+
+            $this->addFlash('success', 'Votre commentaire a été publié avec succès !');
+
+            return $this->redirectToRoute('blog_publication_view', [
+                'id' => $article->getId(),
+                'slug' => $article->getSlug()
+            ]);
 
         }
 
         return $this->render('blog/publication_view.html.twig', [
             'article'   => $article,
             'form'      => $form->createView()
+        ]);
+    }
+
+    /**
+     * Contrôleur de la page admin permettant de supprimer un commentaire via son id dans l'url
+     *
+     * Accès réservé aux administrateurs (ROLE_ADMIN)
+     */
+    #[Route('/commentaire/suppression/{id}/', name: 'comment_delete')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function commentDelete(Comment $comment, CommentRepository $commentRepository, Request $request) : Response
+    {
+
+        $token = $request->query->get('token', '');
+
+        if ( !$this->isCsrfTokenValid( 'blog_comment_delete_' . $comment->getId(), $token ) ) {
+
+            $this->addFlash('error', 'Token invalide');
+
+        }
+
+        // Suppréssion de l'article
+        $commentRepository->remove($comment, true);
+
+        // Message flash de succès
+        $this->addFlash('success', 'Le commentaire a été supprimer avec succès !');
+
+        // Redirection vers la page pour voir les commentaires
+        return $this->redirectToRoute('blog_publication_view', [
+            'id' => $comment->getArticle()->getId(),
+            'slug' => $comment->getArticle()->getSlug()
         ]);
     }
 

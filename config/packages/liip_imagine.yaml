@@ -13,4 +13,10 @@ liip_imagine:
                 scale:
                     dim: [700, 700]
 
+        profil_comments:
+            quality: 75
+            filters:
+                scale:
+                    dim: [ 150, 150 ]
+
 

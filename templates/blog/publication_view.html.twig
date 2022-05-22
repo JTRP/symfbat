@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+{% block css %}<link rel="stylesheet" href="{{ asset('css/styles.css') }}">{% endblock %}
 
 {% block title %}{{ article.title }}{% endblock %}
 
@@ -53,26 +54,67 @@
 
                 </article>
 
+                {# Affichage des commentaires #}
                 <div class="row">
 
-                    {% if article.comments is not empty %}
+                    <article class="card bg-black my-2">
 
-                        {% for comment in article.comments %}
+                        <h2 class="text-center my-4">Commentaires : {{ article.comments|length }}</h2>
 
-                            <p> {{ comment.content }} </p>
+                    {% for comment in article.comments %}
 
-                        {% endfor %}
+                        <div class="card-body d-flex bg-light my-3" id="card-comment">
 
-                    {% endif %}
+                            <div class="me-5">
+                                <img src="{{ asset( ( comment.author.photo is null) ? 'images/profil_default.jpg' : 'images/profils/' ~ comment.author.photo )|imagine_filter('profil_comments') }}" alt="">
+                            </div>
 
-                </div>
+                            <div class="w-100">
+                                <footer class="blockquote-footer mt-0 mb-4">
+                                    Ajouté par <span class="text-light">{{ comment.author.pseudonym }}</span> Le <span class="text-light">{{ comment.publicationDate|date('d/m/Y H\\hi') }}</span>
+                                </footer>
 
-                {% if is_granted('ROLE_USER') %}
-                    {{ form( form ) }}
+                                <div class="m-5">
+                                    {{ comment.content|purify }}
+                                </div>
 
-                {% else %}
-                    <p>Vous pouvez vous connecté sur la page de <a href="{{ path('app_login') }}">connexion</a></p>
-                {% endif %}
+                                {# Si l'utilisateur a le rôle admin #}
+                                {% if is_granted('ROLE_ADMIN') %}
+
+                                    <div class="mt-3 d-flex justify-content-end">
+
+                                        <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article')" href="{{ path('blog_comment_delete', {'id': comment.id, 'token': csrf_token('blog_comment_delete_' ~ comment.id)}) }}" class="text-decoration-none text-danger d-block">
+                                            <i class="fa fa-trash-can"></i>
+                                            Supprimer
+                                        </a>
+
+                                    </div>
+
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+
+                        <div class="alert alert-warning">
+
+                            <p class="col-12 col-md-8"> Pas commentaire pour le moment </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                        {% if is_granted('ROLE_USER') %}
+
+                            {{ form( form ) }}
+
+                        {% else %}
+                            <p>Pour envoyer un commentaire veuillez vous connecter ici : <a href="{{ path('app_login') }}">connexion</a></p>
+                        {% endif %}
+
+                </article>
 
 
             </div>
