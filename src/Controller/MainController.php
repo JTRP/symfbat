@@ -81,8 +81,6 @@ class MainController extends AbstractController
             // Récupération des infos de la photo envoyé
             $photo = $form->get('photo')->getData();
 
-            // TODO: Si l'utilisateur à déjà une photo de profil la supprimé
-
             // Création d'un nouveau nom pour la photo ( tans aue le nom est déjà pris on en régnère un )
             do {
                 $newFileName = md5( random_bytes( 100 ) ) . '.' . $photo->guessExtension() ;
