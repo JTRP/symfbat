@@ -136,19 +136,20 @@ class BlogController extends AbstractController
     public function commentDelete(Comment $comment, CommentRepository $commentRepository, Request $request) : Response
     {
 
-        $token = $request->query->get('token', '');
 
-        if ( !$this->isCsrfTokenValid( 'blog_comment_delete_' . $comment->getId(), $token ) ) {
+        if ( !$this->isCsrfTokenValid( 'blog_comment_delete_' . $comment->getId(), $request->query->get('token', '') ) ) {
 
             $this->addFlash('error', 'Token invalide');
 
+        } else {
+
+            // Suppréssion du commentaire
+            $commentRepository->remove($comment, true);
+
+            // Message flash de succès
+            $this->addFlash('success', 'Le commentaire a été supprimer avec succès !');
+
         }
-
-        // Suppréssion de l'article
-        $commentRepository->remove($comment, true);
-
-        // Message flash de succès
-        $this->addFlash('success', 'Le commentaire a été supprimer avec succès !');
 
         // Redirection vers la page pour voir les commentaires
         return $this->redirectToRoute('blog_publication_view', [
