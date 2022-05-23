@@ -28,6 +28,7 @@ class BlogController extends AbstractController
      * Contrôleur de la page permettant de céer un nouvel article
      *
      * Accès reservé au administrateur
+     *
      */
     #[Route('/nouvelle-publication/', name: 'new_publication')]
     #[IsGranted('ROLE_ADMIN')]
@@ -78,6 +79,16 @@ class BlogController extends AbstractController
     public function publicationView( Article $article, Request $request, CommentRepository $commentRepository ) : Response
     {
 
+        // Si l'utilisateur n'est pas connecter afficher l'article
+        // On fais ca pour eviter que le traitement du formulaire ne ce fasse alors que la personne n'est pas connectee
+        if ( !$this->getUser() ) {
+
+            return $this->render('blog/publication_view.html.twig', [
+                'article'   => $article,
+            ]);
+
+        }
+
         // Intensification des class User et Article pour hydrater "comment"
         $comment = new Comment();
 
@@ -90,18 +101,22 @@ class BlogController extends AbstractController
         // Si pas d'erreur
         if ( $form->isSubmitted() && $form->isValid() ) {
 
-            $comment->setPublicationDate( new \DateTime() );
-            $comment->setArticle( $article );
-            $comment->setAuthor( $this->getUser() );
+            $comment->setPublicationDate( new \DateTime() )
+                    ->setArticle( $article )
+                    ->setAuthor( $this->getUser() )
+            ;
+
 
             $commentRepository->add( $comment, true );
 
             $this->addFlash('success', 'Votre commentaire a été publié avec succès !');
 
-            return $this->redirectToRoute('blog_publication_view', [
-                'id' => $article->getId(),
-                'slug' => $article->getSlug()
-            ]);
+            // Renitialisation des variables $form et $comment pour un nouveau formulaire vierge
+            unset($comment);
+            unset($form);
+
+            $comment = new Comment();
+            $form = $this->createForm( CommentFormType::class, $comment );
 
         }
 

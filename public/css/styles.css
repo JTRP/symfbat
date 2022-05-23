@@ -53,7 +53,14 @@ body {
     background-color: #292929;
 }
 
-/* Comment*/
+/* Comment */
+
+.comment-profil-photo {
+
+    width: 100px;
+    height: 100px;
+
+}
 
 #card-comment {
     border-radius: 10px;

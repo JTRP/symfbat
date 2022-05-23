@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Comment;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -17,14 +18,13 @@ class CommentFormType extends AbstractType
         $builder
             ->add('content', TextareaType::class, [
 
-                'label'                 => 'Message',
+                'label'                     => false,
 
                 'constraints' => [
 
                     new NotBlank([
                         'message'           => 'Le champ ne doit pas être vide'
                     ]),
-
 
                     new Length([
 
@@ -37,12 +37,17 @@ class CommentFormType extends AbstractType
                     ])
 
                 ],
+
+                'attr' => [
+                    'placeholder'           => 'Laisser votre commentaire...',
+                    'rows'                  => 10
+                ]
             ])
 
             ->add('save', SubmitType::class, [
-                'label'                 => 'Publier',
+                'label'                     => 'Publier',
                 'attr' => [
-                    'class'             => 'btn btn-outline-primary w-100'
+                    'class'                 => 'btn btn-outline-primary w-100'
                 ]
             ])
         ;
@@ -51,7 +56,7 @@ class CommentFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'data_class'                    => Comment::class
         ]);
     }
 }
